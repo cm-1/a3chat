@@ -1,7 +1,7 @@
 # a3chat
 This assignment contains my submission for the chat assignment of the Web Based Systems course I am taking. One of the requirements for this assignment is that it's hosted on GitHub, so that's the main reason it's here.
 
-As suggested by the professor, a starting point for this code was the chat tutorial by Socket.IO, which can be found at https://socket.io/get-started/chat/ (or at web.archive.org, depending on when you read this and what the future holds.) However, the assignment requires many more features, and so the resulting code should look quite different.
+As suggested by the professor, a starting point for this code was the chat tutorial by Socket.IO, which can be found at https://socket.io/get-started/chat/ (or at web.archive.org, depending on when you read this and what the future holds). However, the assignment requires many more features, and so the resulting code should look quite different.
 
 ## Can I Use This?
 
