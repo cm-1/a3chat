@@ -32,6 +32,7 @@ Hopefully, by the time you read this, I will have implemented:
     + If a user disconnects, then reconnects, they keep their nickname.
 11. Supports 5+ concurrent users at a time.
 12. Tested to work in both Chrome and Firefox. \[I'll try to test Edge wherever possible. Safari and Internet Explorer are probably on their own...\]
+
 Finally, the following is a **note to myself to make sure it works on the lab's Linux computers. I will have plenty of time to test this on the weekend, given that the University owns me and I live nowhere else.**
 
 ## Awesome! How can I use this?
