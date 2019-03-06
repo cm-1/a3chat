@@ -1,0 +1,15 @@
+== Package installs ==
+
+	npm install --save express
+	
+	npm install -g nodemon
+		(the -g makes it global, so you can run from any directory you want)
+
+== Notes ==
+* The following allows use of "npm start"
+	  "scripts":{
+		"start": "node index"
+	  }
+* Or, you can install nodemon, and just say "nodemon" (no arguments needed).
+* I don't think anything in the package.json is needed for nodemon?
+* 
