@@ -1,0 +1,21 @@
+Have to implement:
+* Basic responsive design.
+* Timestamps (calculated by the server)
+* Random, unique nicknames upon connection
+* Bottom-aligning of text (this is supposed to be challenging!) and a scroll bar
+* History
+	- Memory of at least the last 200 messages. This is probably better to do in memory than on disk, given that this is just a school assignment...
+	- The entire remembered chat log is displayed to the user upon connection
+* List of all online users. Instantly updated for all users whenever someone joins/disconnects.
+* Changing of nicknames using the /nick <new nickname> command
+	- Command is refused if the nickname is not unique
+	- Nickname change produces instant refresh for all users, making the change visible to all of them
+* Change of nickname colour via /nickcolor RRGGBB command
+	- Again, change is instantly shown to all users...
+* User-posted messages are bolded (not so much a feature as an assignment requirement...)
+* Persistence via Cookies.
+	- If a user disconnects, then reconnects, they keep their nickname.
+* Supports 5+ concurrent users at a time.
+* Tested to work in both Chrome and Firefox. [I'll try to test Edge wherever possible. Safari and Internet Explorer are probably on their own...]
+Finally, the following is a note to myself to make sure it works on the lab's Linux computers.
+I will have plenty of time to test this on the weekend, given that the University owns me and I live nowhere else.

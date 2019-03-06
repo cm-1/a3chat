@@ -4,6 +4,9 @@
 	
 	npm install -g nodemon
 		(the -g makes it global, so you can run from any directory you want)
+		
+	npm install --save socket.io
+
 
 == Notes ==
 * The following allows use of "npm start"
