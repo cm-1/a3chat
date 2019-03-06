@@ -19,17 +19,17 @@ Hopefully, by the time you read this, I will have implemented:
 3. Random, unique nicknames upon connection
 4. Bottom-aligning of text (this is supposed to be challenging!) and a scroll bar
 5. History
-..+ Memory of at least the last 200 messages. This is *probably* better to do in memory than on disk, given that this is just a school assignment...
-..+ The *entire* remembered chat log is displayed to the user upon connection
+    + Memory of at least the last 200 messages. This is *probably* better to do in memory than on disk, given that this is just a school assignment...
+    + The *entire* remembered chat log is displayed to the user upon connection
 6. List of all online users. Instantly updated for all users whenever someone joins/disconnects.
 7. Changing of nicknames using the `/nick <new nickname>` command
-..+ Command is refused if the nickname is not unique
-..+ Nickname change produces *instant* refresh for all users, making the change visible to all of them
+    + Command is refused if the nickname is not unique
+    + Nickname change produces *instant* refresh for all users, making the change visible to all of them
 8. Change of nickname colour via `/nickcolor RRGGBB` command
-..+ Again, change is instantly shown to all users...
+    + Again, change is instantly shown to all users...
 9. User-posted messages are bolded (not so much a feature as an assignment requirement...)
 10. Persistence via Cookies.
-..+ If a user disconnects, then reconnects, they keep their nickname.
+    + If a user disconnects, then reconnects, they keep their nickname.
 11. Supports 5+ concurrent users at a time.
 12. Tested to work in both Chrome and Firefox. \[I'll try to test Edge wherever possible. Safari and Internet Explorer are probably on their own...\]
 Finally, the following is a **note to myself to make sure it works on the lab's Linux computers. I will have plenty of time to test this on the weekend, given that the University owns me and I live nowhere else.**
