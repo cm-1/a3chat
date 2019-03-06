@@ -10,6 +10,10 @@ $(document).ready(function() {
 	});
 	
 	socket.on('chat message', function(msg){
-		$('#messages').append($('<li>').text(msg));
+		/*https://www.w3schools.com/howto/howto_css_chat.asp
+		I'm using a modification of this for now, to test bottom-alignment and scrolling.
+		CHANGE THE HTML! CHANGE THE CSS!
+		*/
+		$('#message-pane').append("<div class=\"message\">  <p>" + msg + "</p>  <span class=\"timestamp\">11:00</span></div>");
     });
 });

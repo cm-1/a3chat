@@ -33,16 +33,52 @@ form button {
 	border: none; padding: 10px; 
 }
 
-#messages {
+#message-pane {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	height: 500px;
+	overflow: auto;
 }
 
-#messages li { padding: 5px 10px; }
-#messages li:nth-child(odd) { background: #eee; }
+/*#message-pane li { padding: 5px 10px; }
+#message-pane li:nth-child(odd) { background: #eee; }*/
 
 h1.testh1{
 	color: red;
 	border: 2px solid red;
+}
+
+
+
+
+/* Chat containers */
+.message {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+/* Darker chat container */
+.darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+/* Clear floats */
+.message::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Style time text */
+.timestamp {
+  float: right;
+  color: #aaa;
 }
