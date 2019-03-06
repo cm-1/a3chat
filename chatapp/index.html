@@ -37,10 +37,22 @@
 		
 	</head>
 	<body>
-		<!--<h1 class="testh1"> Test </h1>-->
-		<div id="message-pane"></div>
-		<form action="">
-			<input id="m" autocomplete="off" /><button>Send</button>
-		</form>
+		<div id="outermost" class="flexv">
+			<header class="seg"> <h1>Welcome to the holochat!</h1> </header>
+			<!--<h1 class="testh1"> Test </h1>-->
+			<div id="main" class="seg seg-grow flexh">
+				<div id="messaging" class="flexv main-seg seg-grow">
+					<div id="message-pane" class="seg seg-grow"></div>
+					<div class="seg">
+						<form action="">
+							<input id="msg-input" autocomplete="off" /><button>Send</button>
+						</form>
+					</div>
+				</div>
+				<div id="user-list" class="main-seg seg">
+					<ul> <li>U1</li> <li>U2</li> <li>U3</li> <li>U4</li> <li>U5</li> </ul>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
