@@ -25,17 +25,14 @@ let nicknames = {};	//Will store objects in the form {... userID: {nickname, col
 
 let online = []; //List of userIDs (socket IDs, in the case of this assignment) of online users
 
-//isValidUsername( username ) function
-let isValidUsername = function(username){
-	//Test if string is empty (i.e. nameOfString.length > 0)
-	if (username.length <= 0) return false;
-	
+//isUsernameOnline( username ) function
+let isUsernameOnline = function(username){
 	//Test if a user with that nickname is online
-	let userNotOnline = true;
+	let userOnline = false;
 	for (let userIdentifier of online){
-		if (nicknames[userIdentifier].nickname === username) userNotOnline = false;
+		if (nicknames[userIdentifier].nickname === username) userOnline = true;
 	}
-	return userNotOnline;
+	return userOnline;
 };
 
 //Adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSL
@@ -114,7 +111,7 @@ io.on("connection", function(socket){
 	nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix;
 	
 	//Keep updating the username as necessary, in case of a conflict, somehow...
-	while (!isValidUsername(autoNickname)){
+	while (isUsernameOnline(autoNickname)){
 		autoNickname = "User-" + nextuserIdentifierSuffix.toString();
 		nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix;
 	}
@@ -147,24 +144,29 @@ io.on("connection", function(socket){
 	socket.on("new message", function(msg){
 		date = new Date();
 		
+		let newMsg = {message: msg.message, userID: socket.id, timestamp: date.toUTCString()};
+		msgLog.push(newMsg);
+		
+		//Only store so many messages, since we're using memory and not a database
+		if (msgLog.length > LOGSIZE){
+			msgLog = msgLog.slice(msgLog.length - LOGSIZE);
+		}
+		console.log("===\nHere1\n===");
+		io.emit("new message", newMsg);		
+		console.log("===\nHere2\n===");
+		
 		//Regex test for "/nick ..." command
-		if (/^\/nick\s/i.test(msg.message)){
+		if (/^\/nick(\s|$)/i.test(msg.message)){
 			let newNickname = msg.message.substr(6, msg.message.length).trim();
-			if (isValidUsername(newNickname)){
+			if (newNickname.length <= 0){
+				io.emit("warning", {warning: "Command failed. You have to specify a username.\nUsage: /nick myNewUsernameHere"});
+			}
+			else if (isUsernameOnline(newNickname)){
+				io.emit("warning", {warning: "Command failed. Username is already in use, and is thus invalid.\nUsage: /nick myNewUsernameHere"});
+			} else {
 				nicknames[socket.id].nickname = newNickname;
 				io.emit("user change", {userID: socket.id, nickname: nicknames[socket.id].nickname, colour: nicknames[socket.id].colour});
 			}
-		}
-		
-		else {
-			let newMsg = {message: msg.message, userID: socket.id, timestamp: date.toUTCString()};
-			msgLog.push(newMsg);
-			
-			//Only store so many messages, since we're using memory and not a database
-			if (msgLog.length > LOGSIZE){
-				msgLog = msgLog.slice(msgLog.length - LOGSIZE);
-			}
-			io.emit("new message", newMsg);
 		}
 	});
 
