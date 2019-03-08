@@ -1,10 +1,5 @@
 Have to implement:
 * Basic responsive design.
-* (Sorta-DONE!) Timestamps (calculated by the server)
-	- DONE! But maybe add date, too?
-	- Could also add a "Today" and a "Yesterday" feature, but that may need an event at midnight UTC? And that would need setTimeout?
-	- Also, doing the "Today", "Yesterday", etc. would make it easier to store the date info in html tag as "data-" custom attributes.
-	- Finally, note that getUTCMonth is 0-11, while getUTCFullYear and getUTCDate are "properly" indexed.
 * List of all online users. Instantly updated for all users whenever someone joins/disconnects.
 	- Make sure it's scrollable;
 * Changing of nicknames using the /nick <new nickname> command
@@ -13,9 +8,18 @@ Have to implement:
 * Change of nickname colour via /nickcolor RRGGBB command
 	- Again, change is instantly shown to all users...
 	- Check if colour is too dark?
-* User-posted messages are bolded (not so much a feature as an assignment requirement...)
 * Persistence via Cookies.
 	- If a user disconnects, then reconnects, they keep their nickname.
+	
+== Done, But Improvable ==
+* (SORTA-DONE!) User-posted messages are bolded (not so much a feature as an assignment requirement...)
+* (Sorta-DONE!) Timestamps (calculated by the server)
+	- DONE! But maybe add date, too?
+	- Could also add a "Today" and a "Yesterday" feature, but that may need an event at midnight UTC? And that would need setTimeout?
+	- Also, doing the "Today", "Yesterday", etc. would make it easier to store the date info in html tag as "data-" custom attributes.
+	- Finally, note that getUTCMonth is 0-11, while getUTCFullYear and getUTCDate are "properly" indexed.
+
+== Testing ==
 * Supports 5+ concurrent users at a time.
 * Tested to work in both Chrome and Firefox. [I'll try to test Edge wherever possible. Safari and Internet Explorer are probably on their own...]
 Finally, the following is a note to myself to make sure it works on the lab's Linux computers.
