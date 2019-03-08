@@ -1,13 +1,16 @@
-Have to implement:
+== Have to implement: ==
 * Basic responsive design.
-* List of all online users. Instantly updated for all users whenever someone joins/disconnects.
-	- Make sure it's scrollable;
+* Make user list scrollable.
+* "The nickname should be indicated to the user, 
+  for example by being displayed at the top of the page 
+  as suggested in the proposed layout."
 * Changing of nicknames using the /nick <new nickname> command
-	- Command is refused if the nickname is not unique
+	- Command is refused, WITH ERROR MESSAGE, if the nickname is not unique
 	- Nickname change produces instant refresh for all users, making the change visible to all of them
 * Change of nickname colour via /nickcolor RRGGBB command
+	- Command is refused, WITH ERROR MESSAGE, if wrong format
 	- Again, change is instantly shown to all users...
-	- Check if colour is too dark?
+	- (SKIP FOR NOW) Check if colour is too dark?
 * Persistence via Cookies.
 	- If a user disconnects, then reconnects, they keep their nickname.
 	
@@ -15,13 +18,14 @@ Have to implement:
 * (SORTA-DONE!) User-posted messages are bolded (not so much a feature as an assignment requirement...)
 * (Sorta-DONE!) Timestamps (calculated by the server)
 	- DONE! But maybe add date, too?
-	- Could also add a "Today" and a "Yesterday" feature, but that may need an event at midnight UTC? And that would need setTimeout?
-	- Also, doing the "Today", "Yesterday", etc. would make it easier to store the date info in html tag as "data-" custom attributes.
 	- Finally, note that getUTCMonth is 0-11, while getUTCFullYear and getUTCDate are "properly" indexed.
+	- (SKIP FOR NOW) Could also add a "Today" and a "Yesterday" feature, but that may need an event at midnight UTC? And that would need setTimeout?
+	- (SKIP FOR NOW) Also, doing the "Today", "Yesterday", etc. would make it easier to store the date info in html tag as "data-" custom attributes.
 
 == Testing ==
 * Supports 5+ concurrent users at a time.
 * Tested to work in both Chrome and Firefox. [I'll try to test Edge wherever possible. Safari and Internet Explorer are probably on their own...]
+
 Finally, the following is a note to myself to make sure it works on the lab's Linux computers.
 I will have plenty of time to test this on the weekend, given that the University owns me and I live nowhere else.
 
@@ -31,3 +35,4 @@ I will have plenty of time to test this on the weekend, given that the Universit
 * (DONE!) History
 	- Memory of at least the last 200 messages. This is probably better to do in memory than on disk, given that this is just a school assignment...
 	- The entire remembered chat log is displayed to the user upon connection
+* (DONE!) List of all online users. Instantly updated for all users whenever someone joins/disconnects.

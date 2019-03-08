@@ -27,7 +27,7 @@ $(document).ready(function() {
 		if (minutesString.length < 2) minutesString = "0" + minutesString;
 		
 		let $msgDiv = $("<div></div>").addClass("message");
-		let $userString = $("<span></span>").addClass("nickname").text(nicknames[msgData.userID].nickname);
+		let $userString = $("<span></span>").addClass("nickname").attr("data-uID", msgData.userID).text(nicknames[msgData.userID].nickname);
 		let $youString = $("<span></span>").addClass("you-string");
 		let $timeString = $("<span></span>").addClass("timestamp").text(msgTime.getUTCHours() + ":" + minutesString);
 		let $msgString = $("<span></span>").addClass("message-data").text(msgData.message);
@@ -45,10 +45,28 @@ $(document).ready(function() {
 				
 		$("#message-pane").append($msgDiv);
 	};
+	
+	let updateUserList = function(){
+		$("#user-list").empty()
+		
+		for (let uID of online){
+			let $userString = $("<span></span>").addClass("nickname").attr("data-uid", uID).text(nicknames[uID].nickname);
+			let $youString = $("<span></span>").addClass("you-string");
+			
+			$userString.css({"color":nicknames[uID].colour});
+			
+			if (uID === userIdentifier){
+				$youString.text(" (You)");
+				$userString.addClass("your-username");
+			}
+			
+			$("#user-list").append($("<li></li>").append($userString, $youString));
+		}
+	};
 
 	$("form").submit(function(e){
 		e.preventDefault(); // prevents page reloading
-		socket.emit("new message", {message: $("#msg-input").val(), userID: userIdentifier});
+		socket.emit("new message", {message: $("#msg-input").val()});
 		$("#msg-input").val("");
 		messages.scrollTop(messages.prop("scrollHeight")); //Scrolls to bottom of message pane
 		return false;
@@ -70,6 +88,8 @@ $(document).ready(function() {
 	socket.on("user list change", function(newInfo){
 		online = newInfo.online;
 		nicknames = newInfo.nicknames;
+		
+		updateUserList();
 	});
 	
 	
@@ -79,10 +99,19 @@ $(document).ready(function() {
 		online = welcomeData.online;
 		nicknames = welcomeData.nicknames;
 		
+		updateUserList();
+		
 		for(let msg of welcomeData.msgLog){
 			addMessage(msg);
 		}
 		
 		messages.scrollTop(messages.prop("scrollHeight"));
+	});
+	
+	socket.on("user change", function(changeData){
+		$(".nickname[data-uid|='" + changeData.userID + "']").css({"color" : changeData.colour}).text(changeData.nickname)
+		nicknames[changeData.userID].nickname = changeData.nickname;
+		nicknames[changeData.userID].colour = changeData.colour;
+		updateUserList();
 	});
 });

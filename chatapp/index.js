@@ -146,14 +146,26 @@ io.on("connection", function(socket){
 
 	socket.on("new message", function(msg){
 		date = new Date();
-		let newMsg = {message: msg.message, userID: msg.userID, timestamp: date.toUTCString()};
-		msgLog.push(newMsg);
 		
-		//Only store so many messages, since we're using memory and not a database
-		if (msgLog.length > LOGSIZE){
-			msgLog = msgLog.slice(msgLog.length - LOGSIZE);
+		//Regex test for "/nick ..." command
+		if (/^\/nick\s/i.test(msg.message)){
+			let newNickname = msg.message.substr(6, msg.message.length).trim();
+			if (isValidUsername(newNickname)){
+				nicknames[socket.id].nickname = newNickname;
+				io.emit("user change", {userID: socket.id, nickname: nicknames[socket.id].nickname, colour: nicknames[socket.id].colour});
+			}
 		}
-		io.emit("new message", newMsg);
+		
+		else {
+			let newMsg = {message: msg.message, userID: socket.id, timestamp: date.toUTCString()};
+			msgLog.push(newMsg);
+			
+			//Only store so many messages, since we're using memory and not a database
+			if (msgLog.length > LOGSIZE){
+				msgLog = msgLog.slice(msgLog.length - LOGSIZE);
+			}
+			io.emit("new message", newMsg);
+		}
 	});
 
 });
