@@ -15,4 +15,6 @@
 	  }
 * Or, you can install nodemon, and just say "nodemon" (no arguments needed).
 * I don't think anything in the package.json is needed for nodemon?
+* socket.broadcast to send to everyone except a particular socket.
+  io.emit to send to EVERYONE.
 * 

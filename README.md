@@ -16,7 +16,7 @@ If you *have* the chance, though, it may be nice to credit the socket.io tutoria
 Hopefully, by the time you read this, I will have implemented:
 1. Basic responsive design.
 2. Timestamps (calculated by the server)
-3. Random, unique nicknames upon connection
+3. Unique nicknames upon connection
 4. Bottom-aligning of text (this is supposed to be challenging!) and a scroll bar
 5. History
     + Memory of at least the last 200 messages. This is *probably* better to do in memory than on disk, given that this is just a school assignment...
