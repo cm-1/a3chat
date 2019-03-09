@@ -76,8 +76,9 @@ $(document).ready(function() {
 		//Check if we're at the bottom of the message pane, scroll-wise
 		//The below check is discussed nicely at https://stackoverflow.com/questions/25505778/automatically-scroll-down-chat-div
 		let atBottomOfMessages = Math.abs(messages.prop("scrollTop") + messages.prop("clientHeight") - messages.prop("scrollHeight")) <= 1;
-		console.log("Scroll Info: ", messages.prop("scrollTop") + messages.prop("clientHeight") , ', ', messages.prop("scrollHeight"));
+		//console.log("Scroll Info: ", messages.prop("scrollTop") + messages.prop("clientHeight") , ', ', messages.prop("scrollHeight"));
 		//console.log(msgData);
+		
 		addMessage(msgData);
 		
 		if(atBottomOfMessages){
@@ -89,14 +90,13 @@ $(document).ready(function() {
 		//Check if we're at the bottom of the message pane, scroll-wise
 		//The below check is discussed nicely at https://stackoverflow.com/questions/25505778/automatically-scroll-down-chat-div
 		let atBottomOfMessages = Math.abs(messages.prop("scrollTop") + messages.prop("clientHeight") - messages.prop("scrollHeight")) <= 1;
-		console.log("Scroll Info (W): ", messages.prop("scrollTop") + messages.prop("clientHeight") , ', ', messages.prop("scrollHeight"));
+		//console.log("Scroll Info (W): ", messages.prop("scrollTop") + messages.prop("clientHeight") , ', ', messages.prop("scrollHeight"));
 
 
 		let $msgDiv = $("<div></div>").addClass("message").addClass("warning");
 		let $topString = $("<span></span>").addClass("warning-top").text("ERROR");
 		let $msgString = $("<span></span>").addClass("message-data");
 		$msgString.append(warningData.warning);
-		console.log("I should be warning you!");
 
 		$msgDiv.append($topString, ":", /*$timeString,*/ "<br><br>", $msgString);
 				
@@ -116,6 +116,7 @@ $(document).ready(function() {
 	
 	
 	socket.on("welcome", function(welcomeData){
+		document.cookie = "userID=" + welcomeData.yourIdentifier.toString();
 		console.log(welcomeData);
 		userIdentifier = welcomeData.yourIdentifier;
 		online = welcomeData.online;

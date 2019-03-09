@@ -12,10 +12,11 @@ const express = require("express");
 const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
+const cookie = require('cookie');
 
 const LOGSIZE = 500;
 
-//UNUSED: let nextUserID = 0; //Used for actual user numbers
+let nextUserID = 0; //Used for actual user numbers
 let nextuserIdentifierSuffix = 0; //Used for actual user NAMES (default names, that is)
 
 let msgLog = []; //Will store objects in the form {message, userID, timestamp}
@@ -49,7 +50,7 @@ let fromHslToRgb = function(hue, sat, light){
 	let h2 = hue/60;
 	let x = chroma * (1 - Math.abs((h2 % 2) - 1));
 	
-	console.log("hue:", hue, ", h2: ", h2, ", x:", x, ", chroma", chroma);
+	//console.log("hue:", hue, ", h2: ", h2, ", x:", x, ", chroma", chroma);
 	
 	let r1 = 0;
 	let g1 = 0;
@@ -68,7 +69,7 @@ let fromHslToRgb = function(hue, sat, light){
 	} else if (5 <= h2 && h2 <= 6){
 		r1 = chroma; b1 = x;
 	}
-	console.log("(", r1, g1, b1, ")");
+	//console.log("(", r1, g1, b1, ")");
 	let m = light - chroma/2;
 	let finalCol = {r: Math.floor((r1 + m)*255), g: Math.floor((g1 + m)*255), b: Math.floor((b1 + m)*255)};
 	return "#" + finalCol.r.toString(16).padStart(2, '0') + finalCol.g.toString(16).padStart(2, '0') + finalCol.b.toString(16).padStart(2, '0');
@@ -91,61 +92,89 @@ app.get("/", function(req, res){
 });
 
 io.on("connection", function(socket){
-	console.log("User Connection Occurred");
+	//console.log("User Connection Occurred");
+	
+	let connUserID = -1;
 	
 	//Test for cookies.
-	//If cookies, test if someone else "snatched" the username since
+	let c = {};
+	if (socket.request.headers.cookie) c = cookie.parse(socket.request.headers.cookie);
 	
-	//Makes username in form "User-Number", e.g. "User-1" or "User-23".
-	let maxuserIdentifierSuffix = 10000;
 	
-	let autoNickname = "User-" + nextuserIdentifierSuffix.toString();
-	nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix;
+//If cookies, test if someone else "snatched" the username since
+
+	if(c.userID && nicknames[parseInt(c.userID)] && online.indexOf(parseInt(c.userID)) < 0){
+		//parseInt is required because client code uses "===", which will not match strings and ints
+		connUserID = parseInt(c.userID);
+		console.log("UserID: ", connUserID);
+		idMap[socket.id] = connUserID;
+	}
+	else{
 	
-	//Keep updating the username as necessary, in case of a conflict, somehow...
-	while (isUsernameOnline(autoNickname)){
-		autoNickname = "User-" + nextuserIdentifierSuffix.toString();
+		//Makes username in form "User-Number", e.g. "User-1" or "User-23".
+		let maxuserIdentifierSuffix = 10000;
+		
+		let autoNickname = "User-" + nextuserIdentifierSuffix.toString();
 		nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix;
+
+		
+		//Keep updating the username as necessary, in case of a conflict, somehow...
+		while (isUsernameOnline(autoNickname)){
+			autoNickname = "User-" + nextuserIdentifierSuffix.toString();
+			nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix;
+		}
+		
+		//Create colour with random hue (range 0-360), middling saturation, middling lightness
+		let col = fromHslToRgb(Math.floor((Math.random() * 360) + 1), 0.5, 0.5);
+		
+		idMap[socket.id] = nextUserID;
+		connUserID = nextUserID;
+		//In future versions, maybe use nextUserID = (nextUserID + 1) % Number.MAX_SAFE_INTEGER; to reset the next counter?
+		nextUserID += 1;
+		nicknames[connUserID] = {nickname: autoNickname, colour: col};
 	}
 	
-	//Create colour with random hue (range 0-360), middling saturation, middling lightness
-	let col = fromHslToRgb(Math.floor((Math.random() * 360) + 1), 0.5, 0.5);
 	
-	nicknames[socket.id] = {nickname: autoNickname, colour: col};
-	console.log(col);
+	//console.log(col);
 	
-	online.push(socket.id);
+	online.push(connUserID);
 	
-	socket.emit("welcome", {yourIdentifier: socket.id, online: online, nicknames: nicknames, msgLog: msgLog});
+	//console.log(msgLog);
+	socket.emit("welcome", {yourIdentifier: connUserID, online: online, nicknames: nicknames, msgLog: msgLog});
 	socket.broadcast.emit("user list change", {online: online, nicknames: nicknames});
 	
 	
-	console.log("nicknames: " + nicknames);
-	console.log("online: " + online);
+	//console.log("nicknames: " + nicknames);
+	//console.log("online: " + online);
+	
+
 	
 	socket.on("disconnect", function(){
-		console.log("User " + socket.id + " Disconnected");
-		let userIndex = online.indexOf(socket.id);
+		let curID = idMap[socket.id];
+		//console.log("User " + curID + " Disconnected");
+		let userIndex = online.indexOf(curID);
 		if (userIndex >= 0) {
 			online.splice(userIndex, 1);
 		}
 		io.emit("user list change", {online: online, nicknames: nicknames});
-		console.log("online: " + online);
+		delete idMap[socket.id];
+		//console.log("online: " + online);
 	});
 
 	socket.on("new message", function(msg){
+		let curID = idMap[socket.id];
 		date = new Date();
 		
-		let newMsg = {message: msg.message, userID: socket.id, timestamp: date.toUTCString()};
+		let newMsg = {message: msg.message, userID: curID, timestamp: date.toUTCString()};
 		msgLog.push(newMsg);
 		
 		//Only store so many messages, since we're using memory and not a database
 		if (msgLog.length > LOGSIZE){
 			msgLog = msgLog.slice(msgLog.length - LOGSIZE);
 		}
-		console.log("===\nHere1\n===");
+		//console.log("===\nHere1\n===");
 		io.emit("new message", newMsg);		
-		console.log("===\nHere2\n===");
+		//console.log("===\nHere2\n===");
 		
 		//Regex test for "/nick ..." command
 		if (/^\/nick(\s|$)/i.test(msg.message)){
@@ -156,8 +185,8 @@ io.on("connection", function(socket){
 			else if (isUsernameOnline(newNickname)){
 				io.emit("warning", {warning: "Command failed. Username is already in use, and is thus invalid.<br>Usage: /nick myNewUsernameHere"});
 			} else {
-				nicknames[socket.id].nickname = newNickname;
-				io.emit("user change", {userID: socket.id, nickname: nicknames[socket.id].nickname, colour: nicknames[socket.id].colour});
+				nicknames[curID].nickname = newNickname;
+				io.emit("user change", {userID: curID, nickname: nicknames[curID].nickname, colour: nicknames[curID].colour});
 			}
 		}
 		//Regex test for "/nick ..." command
@@ -171,8 +200,8 @@ io.on("connection", function(socket){
 //Test if new colour is too dark?
 
 			if (colValid){
-				nicknames[socket.id].colour = "#" + newCol;
-				io.emit("user change", {userID: socket.id, nickname: nicknames[socket.id].nickname, colour: nicknames[socket.id].colour});
+				nicknames[curID].colour = "#" + newCol;
+				io.emit("user change", {userID: curID, nickname: nicknames[curID].nickname, colour: nicknames[curID].colour});
 			}
 			else {
 				io.emit("warning", {warning: "Command failed. New colour is not properly formatted.<br>Usage: /nickcolor RRGGBB, e.g. /nickcolor FF33A4 "});
