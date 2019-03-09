@@ -22,6 +22,8 @@ let msgLog = []; //Will store objects in the form {message, userID, timestamp}
 
 let nicknames = {};	//Will store objects in the form {... userID: {nickname, colour}, ...}
 					//Colour will be in string form, "#~~~~~~"
+					
+let idMap = {}; //Form: {socketID: userID}
 
 let online = []; //List of userIDs (socket IDs, in the case of this assignment) of online users
 
