@@ -94,7 +94,8 @@ $(document).ready(function() {
 
 		let $msgDiv = $("<div></div>").addClass("message").addClass("warning");
 		let $topString = $("<span></span>").addClass("warning-top").text("ERROR");
-		let $msgString = $("<span></span>").addClass("message-data").text(warningData.warning);
+		let $msgString = $("<span></span>").addClass("message-data");
+		$msgString.append(warningData.warning);
 		console.log("I should be warning you!");
 
 		$msgDiv.append($topString, ":", /*$timeString,*/ "<br><br>", $msgString);

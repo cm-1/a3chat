@@ -73,23 +73,13 @@ let fromHslToRgb = function(hue, sat, light){
 };
 
 //Returns HSL lightness value
+//Unused in assignment submission.
+//	Was considering testing if users' colours have a lightness that won't show up well.
 let lightness = function(r, g, b){
 	let maxVal = Math.max(r, g, b);
 	let minVal = Math.min(r, g, b);
 	return 0.5 * (maxVal + minVal);
 };
-
-
-
-//Test if a colour is valid 6-digit hexadecimal:
-//		newCol = newCol.trim(); //Remove whitespace
-//		let colValid = /^[0-9, A-F]{6}$/i.test(newCol);
-//^ is start of string, $ is end, "i" at end means case-insensitive, {6} means six chars from [...].
-
-
-//Test if new colour is too dark?
-//Make new colour
-//nicknames[userNum].colour = "#" + newCol;
 
 
 app.use(express.static(__dirname + "/public"));
@@ -157,17 +147,36 @@ io.on("connection", function(socket){
 		
 		//Regex test for "/nick ..." command
 		if (/^\/nick(\s|$)/i.test(msg.message)){
-			let newNickname = msg.message.substr(6, msg.message.length).trim();
+			let newNickname = msg.message.substr("/nick ".length, msg.message.length).trim();
 			if (newNickname.length <= 0){
-				io.emit("warning", {warning: "Command failed. You have to specify a username.\nUsage: /nick myNewUsernameHere"});
+				io.emit("warning", {warning: "Command failed. You have to specify a username.<br>Usage: /nick myNewUsernameHere"});
 			}
 			else if (isUsernameOnline(newNickname)){
-				io.emit("warning", {warning: "Command failed. Username is already in use, and is thus invalid.\nUsage: /nick myNewUsernameHere"});
+				io.emit("warning", {warning: "Command failed. Username is already in use, and is thus invalid.<br>Usage: /nick myNewUsernameHere"});
 			} else {
 				nicknames[socket.id].nickname = newNickname;
 				io.emit("user change", {userID: socket.id, nickname: nicknames[socket.id].nickname, colour: nicknames[socket.id].colour});
 			}
 		}
+		//Regex test for "/nick ..." command
+		else if (/^\/nickcolor(\s|$)/i.test(msg.message)){
+			let newCol = msg.message.substr("/nickcolor ".length, msg.message.length).trim();
+			
+			//Test if a colour is valid 6-digit hexadecimal:
+			let colValid = /^[0-9, A-F]{6}$/i.test(newCol);
+			//^ is start of string, $ is end, "i" at end means case-insensitive, {6} means six chars from [...].
+			
+//Test if new colour is too dark?
+
+			if (colValid){
+				nicknames[socket.id].colour = "#" + newCol;
+				io.emit("user change", {userID: socket.id, nickname: nicknames[socket.id].nickname, colour: nicknames[socket.id].colour});
+			}
+			else {
+				io.emit("warning", {warning: "Command failed. New colour is not properly formatted.<br>Usage: /nickcolor RRGGBB, e.g. /nickcolor FF33A4 "});
+			}
+		}
+		
 	});
 
 });

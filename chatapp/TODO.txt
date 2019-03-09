@@ -4,21 +4,24 @@
 * "The nickname should be indicated to the user, 
   for example by being displayed at the top of the page 
   as suggested in the proposed layout."
-* Change of nickname colour via /nickcolor RRGGBB command
-	- Command is refused, WITH ERROR MESSAGE, if wrong format
-	- Again, change is instantly shown to all users...
-	- (SKIP FOR NOW) Check if colour is too dark?
 * Persistence via Cookies.
 	- If a user disconnects, then reconnects, they keep their nickname.
-* Error if someone "snatched" your username while you were disconnected.
-	
+	- Error if someone "snatched" your username while you were disconnected.
+	- https://stackoverflow.com/questions/39271952/parsing-cookies-with-socket-io
+	- https://stackoverflow.com/questions/208105/how-do-i-remove-a-property-from-a-javascript-object
+	- Have a socketID->userID map, updated on connection AND disconnection.
+	- Parse the cookie for the userID
+	- On client side:	document.cookie = "userID=_";
+	- Etc.
+* See the next section
+
 == Done, But Improvable ==
-* (SORTA-DONE!) User-posted messages are bolded (not so much a feature as an assignment requirement...)
 * (Sorta-DONE!) Timestamps (calculated by the server)
 	- DONE! But maybe add date, too?
 	- Finally, note that getUTCMonth is 0-11, while getUTCFullYear and getUTCDate are "properly" indexed.
 	- (SKIP FOR NOW) Could also add a "Today" and a "Yesterday" feature, but that may need an event at midnight UTC? And that would need setTimeout?
 	- (SKIP FOR NOW) Also, doing the "Today", "Yesterday", etc. would make it easier to store the date info in html tag as "data-" custom attributes.
+* (SORTA-DONE!) User-posted messages are bolded (not so much a feature as an assignment requirement...)
 
 == Testing ==
 * Supports 5+ concurrent users at a time.
@@ -37,3 +40,7 @@ I will have plenty of time to test this on the weekend, given that the Universit
 * (DONE!) Changing of nicknames using the /nick <new nickname> command
 	- (DONE!) Command is refused, WITH ERROR MESSAGE, if the nickname is not unique
 	- (DONE!) Nickname change produces instant refresh for all users, making the change visible to all of them
+* (DONE!) Change of nickname colour via /nickcolor RRGGBB command
+	- (DONE!) Command is refused, WITH ERROR MESSAGE, if wrong format
+	- (DONE!) Again, change is instantly shown to all users...
+	- (SKIP FOR NOW) Check if colour is too dark?
