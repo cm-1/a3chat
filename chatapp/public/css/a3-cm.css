@@ -1,5 +1,6 @@
 /*A3 - Chat App - Web Based Systems</title>
-Initial source/guide for this index.html: https://socket.io/get-started/chat/, Socket.IO's chat tutorial, for now.
+Initial source/guide for this CSS file (heavily modified since, however):
+	https://socket.io/get-started/chat/, Socket.IO's chat tutorial, for now.
 */
 
 * {
@@ -11,7 +12,9 @@ Initial source/guide for this index.html: https://socket.io/get-started/chat/, S
 html { height: 100%; max-height: 100%;}
 
 body { 
+	/* vvvvvvvvvvvvvvvv */
 	font: 13px Helvetica, Arial;
+	/* ^^^^^^^^^^^^^^^^ */
 	
 	/*Below is some stuff needed for the chat thing to size itself properly.*/
 	height: 100%;
@@ -20,6 +23,7 @@ body {
 	margin: 0;
 }
 
+/* vvvvvvvvvvvvvvvv */
 form {
 	background: #000;
 	padding: 3px;
@@ -37,9 +41,11 @@ form input {
 
 form button { 
 	width: 9%; 
-	background: rgb(130, 224, 255);
+	background: #e2bb3b;
 	border: none; padding: 10px; 
 }
+
+/*^^^^^^^^^^^^^*/
 
 #message-pane {
 	/*list-style-type: none;*/
@@ -56,7 +62,7 @@ form button {
 
 #message-pane > :first-child {
     margin-top: auto !important;
-    /* use !important to prevent breakage from child margin settings */
+    /* The !important prevents breakage from child margin settings. */
 }
 
 /*#message-pane li { padding: 5px 10px; }
@@ -105,11 +111,40 @@ h1.testh1{
 .your-username{font-weight: bold;}
 .your-text{font-weight: bold;}
 .you-string{font-style: italic;}
+.chat-title{font-style: italic;
+	text-decoration: underline;
+	font-weight: 1000;
+	color: #e2bb3b;
+}
 
+/*Custom scrollbar*/
+::-webkit-scrollbar {
+  background-color: #777;
+  border-radius: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #444; 
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #e2bb3b; 
+}
+
+
+/*vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
 
 /* Chat containers */
 .message {
-  /*border: 2px solid #dedede;*/
+  border-top: 2px solid #e1e1e1;
   background-color: #f1f1f1;
   padding: 10px;
 }
@@ -121,11 +156,11 @@ h1.testh1{
 }
 
 /* Clear floats */
-.message::after {
+/*.message::after {
   content: "";
   clear: both;
   display: table;
-}
+}*/
 
 /* Style time text */
 .timestamp {

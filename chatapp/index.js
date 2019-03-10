@@ -14,7 +14,7 @@ const http = require("http").Server(app);
 const io = require("socket.io")(http);
 const cookie = require('cookie');
 
-const LOGSIZE = 500;
+const LOGSIZE = 500;	//Number of messages that are stored in memory (no DB support for this assignment)
 
 let nextUserID = 0; //Used for actual user numbers
 let nextuserIdentifierSuffix = 0; //Used for actual user NAMES (default names, that is)
@@ -28,12 +28,13 @@ let idMap = {}; //Form: {socketID: userID}
 
 let online = []; //List of userIDs (socket IDs, in the case of this assignment) of online users
 
-//isUsernameOnline( username ) function
+//Function let's you know if any user going by <username> is online.
 let isUsernameOnline = function(username){
 	//Test if a user with that nickname is online
 	let userOnline = false;
-	for (let userIdentifier of online){
-		if (nicknames[userIdentifier].nickname === username) userOnline = true;
+	for (let userIdentifier of online){	//Iterate through the "online" array
+		if (nicknames[userIdentifier].nickname === username)
+				userOnline = true;
 	}
 	return userOnline;
 };
@@ -42,6 +43,8 @@ let isUsernameOnline = function(username){
 //hue is in range 0-360
 //sat is in range 0-1
 //light is in range 0-1
+//
+//Return value is in form #~~~~~~, e.g. #FF0000
 let fromHslToRgb = function(hue, sat, light){
 	hue = hue % 360;
 	if (hue < 0) hue = 360 + hue;
@@ -71,51 +74,65 @@ let fromHslToRgb = function(hue, sat, light){
 	}
 	//console.log("(", r1, g1, b1, ")");
 	let m = light - chroma/2;
+	
+	//Convert back to 0-255 RGB range
 	let finalCol = {r: Math.floor((r1 + m)*255), g: Math.floor((g1 + m)*255), b: Math.floor((b1 + m)*255)};
+	//Convert THAT to hexadecimal, and prepend a "#". Then return.
 	return "#" + finalCol.r.toString(16).padStart(2, '0') + finalCol.g.toString(16).padStart(2, '0') + finalCol.b.toString(16).padStart(2, '0');
 };
 
 //Returns HSL lightness value
-//Unused in assignment submission.
-//	Was considering testing if users' colours have a lightness that won't show up well.
+//UNUSED in assignment submission.
+//	(Was CONSIDERING testing if users' colours have a lightness that won't show up well.)
 let lightness = function(r, g, b){
 	let maxVal = Math.max(r, g, b);
 	let minVal = Math.min(r, g, b);
 	return 0.5 * (maxVal + minVal);
 };
 
-
+//CSS, Socket.IO, and client JS stored in /public
 app.use(express.static(__dirname + "/public"));
 
+//index.html is the html site for the chat app
 app.get("/", function(req, res){
 	res.sendFile(__dirname + "/index.html");
 });
 
+/*
+	HERE BEGINS ALL THE IMPORTANT SOCKET/NETWORK/LOGIC STUFF!
+*/
 io.on("connection", function(socket){
 	//console.log("User Connection Occurred");
 	
-	let connUserID = -1;
+	let connUserID = -1; //-1 as default for debugging purposes
 	
 	//Test for cookies.
 	let c = {};
-	if (socket.request.headers.cookie) c = cookie.parse(socket.request.headers.cookie);
+	if (socket.request.headers.cookie)
+		c = cookie.parse(socket.request.headers.cookie);
 	
-	
-//If cookies, test if someone else "snatched" the username since
+//IMPLEMENT: If cookies, test if someone else "snatched" the username since their disconnect
 
-	if(c.userID && nicknames[parseInt(c.userID)] && online.indexOf(parseInt(c.userID)) < 0){
+	//Test to make sure cookies don't mess anything up
+	//Tests:
+	//		- Does the cookie contain a userID we can use?
+	//		- Is this a recognized userID, i.e. does it have a nickname?
+	//If both are okay, we can just use this user's previous information, and update the socket-user mapping
+	if(c.userID && nicknames[parseInt(c.userID)]){
 		//parseInt is required because client code uses "===", which will not match strings and ints
 		connUserID = parseInt(c.userID);
 		console.log("UserID: ", connUserID);
 		idMap[socket.id] = connUserID;
 	}
-	else{
+	else{	//Otherwise, we have to create some new info for the user, especially a nickname
 	
 		//Makes username in form "User-Number", e.g. "User-1" or "User-23".
-		let maxuserIdentifierSuffix = 10000;
+		
+		//Eventually wrap usernames back around, so we don't get User-9999999999999999999 after so many connections
+		let maxuserIdentifierSuffix = 10000;	
 		
 		let autoNickname = "User-" + nextuserIdentifierSuffix.toString();
-		nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix;
+		nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix; //Modulus increment
 
 		
 		//Keep updating the username as necessary, in case of a conflict, somehow...
@@ -137,33 +154,47 @@ io.on("connection", function(socket){
 	
 	//console.log(col);
 	
-	online.push(connUserID);
+	//This if statement is MOSTLY if a single user opens up the chat in multiple tabs, sharing 1 cookie
+	if (online.indexOf(connUserID) < 0)
+		online.push(connUserID);
 	
 	//console.log(msgLog);
-	socket.emit("welcome", {yourIdentifier: connUserID, online: online, nicknames: nicknames, msgLog: msgLog});
-	socket.broadcast.emit("user list change", {online: online, nicknames: nicknames});
 	
+	//Socket.emit only sends message to connecting socket. It gets more info, because it's new
+	socket.emit("welcome", {yourIdentifier: connUserID, online: online, nicknames: nicknames, msgLog: msgLog});
+	
+	//Socket.broadcast.emit sends message to all BUT the connecting socket. 
+	//They just get the new user info
+	socket.broadcast.emit("user list change", {online: online, nicknames: nicknames});
 	
 	//console.log("nicknames: " + nicknames);
 	//console.log("online: " + online);
-	
 
-	
+	//If a user leaves:
 	socket.on("disconnect", function(){
-		let curID = idMap[socket.id];
+		let curID = idMap[socket.id]; //Get user id
 		//console.log("User " + curID + " Disconnected");
 		let userIndex = online.indexOf(curID);
-		if (userIndex >= 0) {
-			online.splice(userIndex, 1);
+		
+		//Quick check if the user's opened the chat in multiple tabs, all sharing the same cookie...
+		let userConnectionCount = 0;
+		for(let sock in idMap){
+			if (idMap[sock] === curID)
+				userConnectionCount += 1;
+		}
+		
+		if (userIndex >= 0 && userConnectionCount < 2) {
+			online.splice(userIndex, 1); //Remove user from online list
 		}
 		io.emit("user list change", {online: online, nicknames: nicknames});
-		delete idMap[socket.id];
+		delete idMap[socket.id];	//Delete the socket-userID mapping
 		//console.log("online: " + online);
 	});
 
+	//If a user submits a chat message:
 	socket.on("new message", function(msg){
-		let curID = idMap[socket.id];
-		date = new Date();
+		let curID = idMap[socket.id]; //Get user id
+		date = new Date();	//Timestamp
 		
 		let newMsg = {message: msg.message, userID: curID, timestamp: date.toUTCString()};
 		msgLog.push(newMsg);
@@ -172,12 +203,15 @@ io.on("connection", function(socket){
 		if (msgLog.length > LOGSIZE){
 			msgLog = msgLog.slice(msgLog.length - LOGSIZE);
 		}
-		//console.log("===\nHere1\n===");
-		io.emit("new message", newMsg);		
-		//console.log("===\nHere2\n===");
 		
-		//Regex test for "/nick ..." command
+		//Send everyone this new message that our lovely user sent
+		io.emit("new message", newMsg);		
+		
+		//Regex test for "/nick " command
+		// ^ is for start, \/nick is for /nick, (\s|$) tests for space (or end of string) after,
+		//  and "i" is for case-insensitive
 		if (/^\/nick(\s|$)/i.test(msg.message)){
+			//Get the "argument" of the command
 			let newNickname = msg.message.substr("/nick ".length, msg.message.length).trim();
 			if (newNickname.length <= 0){
 				io.emit("warning", {warning: "Command failed. You have to specify a username.<br>Usage: /nick myNewUsernameHere"});
@@ -185,22 +219,25 @@ io.on("connection", function(socket){
 			else if (isUsernameOnline(newNickname)){
 				io.emit("warning", {warning: "Command failed. Username is already in use, and is thus invalid.<br>Usage: /nick myNewUsernameHere"});
 			} else {
+				//If none of the above happen, we can successfully update the nickname...
 				nicknames[curID].nickname = newNickname;
+				//...and broadcast a message to all sockets to let them know.
 				io.emit("user change", {userID: curID, nickname: nicknames[curID].nickname, colour: nicknames[curID].colour});
 			}
 		}
-		//Regex test for "/nick ..." command
+		//Regex test for "/nick ..." command. Same idea as with /nick, really
 		else if (/^\/nickcolor(\s|$)/i.test(msg.message)){
 			let newCol = msg.message.substr("/nickcolor ".length, msg.message.length).trim();
 			
 			//Test if a colour is valid 6-digit hexadecimal:
+			// ^ is start of string, $ is end, "i" at end means case-insensitive, 
+			// {6} means six chars from [0-9] or [A-F].
 			let colValid = /^[0-9, A-F]{6}$/i.test(newCol);
-			//^ is start of string, $ is end, "i" at end means case-insensitive, {6} means six chars from [...].
 			
 //Test if new colour is too dark?
 
 			if (colValid){
-				nicknames[curID].colour = "#" + newCol;
+				nicknames[curID].colour = "#" + newCol; //Need to prepend "#"
 				io.emit("user change", {userID: curID, nickname: nicknames[curID].nickname, colour: nicknames[curID].colour});
 			}
 			else {
@@ -212,6 +249,7 @@ io.on("connection", function(socket){
 
 });
 
+//Starting the app on port 3000!
 http.listen(3000, function(){
 	console.log("A3 chat app is listening on port number 3000.");
 });
@@ -221,7 +259,7 @@ http.listen(3000, function(){
 
 /*
 The below is some username-generation code I want to preserve,
- but ultimately thought was too "risky" for this assignment.
+ but ultimately thought was too stylistically "risky" for this assignment.
 It was usernames in the form of Char-digit-char-digit.
 E.g. a username of K5Y1
 
