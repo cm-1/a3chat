@@ -17,4 +17,11 @@
 * I don't think anything in the package.json is needed for nodemon?
 * socket.broadcast to send to everyone except a particular socket.
   io.emit to send to EVERYONE.
-* 
+* Cookies & socketIO: https://stackoverflow.com/questions/39271952/parsing-cookies-with-socket-io
+* For removing socket-userID mappings: https://stackoverflow.com/questions/208105/how-do-i-remove-a-property-from-a-javascript-object
+* Removing cookies:
+	Firefox:
+		about:preferences#privacy
+		Click "Manage Data"
+	Chrome:
+		chrome://settings/siteData
