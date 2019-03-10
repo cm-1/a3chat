@@ -39,6 +39,23 @@ let isUsernameOnline = function(username){
 	return userOnline;
 };
 
+//Makes username in form "User-Number", e.g. "User-1" or "User-23".
+let getAutoNickname = function(){
+	//Eventually wrap usernames back around, so we don't get User-9999999999999999999 after so many connections
+	let maxuserIdentifierSuffix = 10000;	
+	
+	let autoNickname = "User-" + nextuserIdentifierSuffix.toString();
+	nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix; //Modulus increment
+
+	
+	//Keep updating the username as necessary, in case of a conflict, somehow...
+	while (isUsernameOnline(autoNickname)){
+		autoNickname = "User-" + nextuserIdentifierSuffix.toString();
+		nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix;
+	}
+	return autoNickname;
+}
+
 //Adapted from https://en.wikipedia.org/wiki/HSL_and_HSV#From_HSL
 //hue is in range 0-360
 //sat is in range 0-1
@@ -112,34 +129,41 @@ io.on("connection", function(socket){
 		c = cookie.parse(socket.request.headers.cookie);
 	
 //IMPLEMENT: If cookies, test if someone else "snatched" the username since their disconnect
+	let nameSnatched = false;
+	let oldNickname = '';
+	//Check if someone took the user's username since they left
+	if(typeof(c.userID) !== 'undefined'){
+		for(let nicknameUserID in nicknames){
+			//If someone has the username, and that someone isn't the user we're currently looking at...
+			if (nicknames[nicknameUserID].nickname === nicknames[parseInt(c.userID)].nickname && nicknameUserID !== c.userID){
+				nameSnatched = true; //...name was snatched.
+				oldNickname = nicknames[parseInt(c.userID)].nickname;
+				//console.log("Matching UserID: ", typeof(nicknameUserID), ", curUID: ", typeof(parseInt(c.userID)), " ||| ", (nicknameUserID !== parseInt(c.userID)).toString());
+			}
+		}
+	}
 
 	//Test to make sure cookies don't mess anything up
 	//Tests:
 	//		- Does the cookie contain a userID we can use?
 	//		- Is this a recognized userID, i.e. does it have a nickname?
 	//If both are okay, we can just use this user's previous information, and update the socket-user mapping
-	if(c.userID && nicknames[parseInt(c.userID)]){
+	if(typeof(c.userID) !== 'undefined' && nicknames[parseInt(c.userID)]){
 		//parseInt is required because client code uses "===", which will not match strings and ints
 		connUserID = parseInt(c.userID);
 		console.log("UserID: ", connUserID);
 		idMap[socket.id] = connUserID;
+		
+		if (nameSnatched){
+			//Create colour with random hue (range 0-360), middling saturation, middling lightness
+			let col = fromHslToRgb(Math.floor((Math.random() * 360) + 1), 0.5, 0.5);
+			let replacementNickname = getAutoNickname();
+			nicknames[parseInt(c.userID)] = {nickname: replacementNickname, colour: col};
+		}
 	}
 	else{	//Otherwise, we have to create some new info for the user, especially a nickname
 	
-		//Makes username in form "User-Number", e.g. "User-1" or "User-23".
-		
-		//Eventually wrap usernames back around, so we don't get User-9999999999999999999 after so many connections
-		let maxuserIdentifierSuffix = 10000;	
-		
-		let autoNickname = "User-" + nextuserIdentifierSuffix.toString();
-		nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix; //Modulus increment
-
-		
-		//Keep updating the username as necessary, in case of a conflict, somehow...
-		while (isUsernameOnline(autoNickname)){
-			autoNickname = "User-" + nextuserIdentifierSuffix.toString();
-			nextuserIdentifierSuffix = (nextuserIdentifierSuffix + 1) % maxuserIdentifierSuffix;
-		}
+		let autoNickname = getAutoNickname();
 		
 		//Create colour with random hue (range 0-360), middling saturation, middling lightness
 		let col = fromHslToRgb(Math.floor((Math.random() * 360) + 1), 0.5, 0.5);
@@ -162,6 +186,9 @@ io.on("connection", function(socket){
 	
 	//Socket.emit only sends message to connecting socket. It gets more info, because it's new
 	socket.emit("welcome", {yourIdentifier: connUserID, online: online, nicknames: nicknames, msgLog: msgLog});
+	
+	if(nameSnatched)
+		socket.emit("warning", {warning: "Greetings. Your previously-used nickname, '" + oldNickname + "', has since been taken.<br> You have been assigned the replacement nickname '" + nicknames[connUserID].nickname + "'."});
 	
 	//Socket.broadcast.emit sends message to all BUT the connecting socket. 
 	//They just get the new user info

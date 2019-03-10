@@ -14,6 +14,9 @@ $(document).ready(function() {
 	let messages = $("#message-pane");
 	let userIdentifier = 0;
 	
+	$("#msg-input").focus();
+	$("#msg-input").select();
+	
 	let nicknames = {};	//Will store objects in the form {... userID: {nickname, colour}, ...}
 						//Colour will be in string form, "#~~~~~~"
 	let online= [];
