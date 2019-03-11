@@ -12,24 +12,54 @@ Initial source/guide for this CSS file (heavily modified since, however):
 html { height: 100%; max-height: 100%;}
 
 body { 
-	/* vvvvvvvvvvvvvvvv */
-	font: 13px Helvetica, Arial;
-	/* ^^^^^^^^^^^^^^^^ */
+	font-family: Verdana, Geneva, sans-serif;
+	color: white;
 	
 	/*Below is some stuff needed for the chat thing to size itself properly.*/
 	height: 100%;
 	min-height: 100%;
 	max-height: 100%;
 	margin: 0;
+	
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#48507a+0,1b2e56+100 */
+background: rgb(72,80,122); /* Old browsers */
+background: -moz-linear-gradient(-45deg, rgba(72,80,122,1) 0%, rgba(27,46,86,1) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(-45deg, rgba(72,80,122,1) 0%,rgba(27,46,86,1) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(135deg, rgba(72,80,122,1) 0%,rgba(27,46,86,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#48507a', endColorstr='#1b2e56',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */}
+
+header {
+	padding: 1em 1.5em; 
 }
 
-/* vvvvvvvvvvvvvvvv */
 form {
-	background: #000;
-	padding: 3px;
+	display: flex;
+
 	/*position: fixed;
 	bottom: 0;*/
 	width: 100%;
+	grid-column: 2;
+}
+
+form input {
+	/*flex: flex-grow, flex-shrink, flex-basis*/
+	flex: 1 1 auto;
+	padding: 0.5em 0.75em;
+}
+
+form button {
+	flex: 0 1 9%;
+	background: #e2bb3b;
+	padding: 1em 1em;
+	border-radius: 5px;
+	font-weight: bold;
+	border: 0px;
+
+}
+/* vvvvvvvvvvvvvvvv */
+/*form {
+	background: #000;
+
 }
 
 form input {
@@ -43,7 +73,7 @@ form button {
 	width: 9%; 
 	background: #e2bb3b;
 	border: none; padding: 10px; 
-}
+}*/
 
 /*^^^^^^^^^^^^^*/
 
@@ -58,6 +88,8 @@ form button {
 	flex-direction: column;
 	/*justify-content: flex-end;*/
 	overflow: auto;
+	background-color: #555;
+	border-radius: 5px;
 }
 
 #message-pane > :first-child {
@@ -104,14 +136,22 @@ h1.testh1{
 	flex: 1 1 auto;
 }
 
-#messaging { max-height: 100%; overflow: auto;}
+#messaging { 
+	max-height: 100%;
+	overflow: auto;
+	padding: 1em;
+	border-radius: 10px;
+	
+}
 #main {max-height: 100%; overflow: auto;}
-#user-list-wrapper{padding: 20px;}
+#user-list-wrapper{padding: 1em; overflow: auto; font-size: 1.25em; max-width: 30%; margin-bottom: 1em;}
 
 .your-username{font-weight: bold;}
 .your-text{font-weight: bold;}
 .you-string{font-style: italic;}
-.chat-title{font-style: italic;
+.chat-title{
+	font-family: Impact, Charcoal, sans-serif;
+	font-style: italic;
 	text-decoration: underline;
 	font-weight: 1000;
 	color: #e2bb3b;
@@ -140,13 +180,25 @@ h1.testh1{
 }
 
 
+
+
 /*vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv*/
 
 /* Chat containers */
 .message {
   border-top: 2px solid #e1e1e1;
-  background-color: #f1f1f1;
-  padding: 10px;
+  background-color: #555;
+  padding: 0.75em 0.75em;
+}
+
+.warning {
+	background-color: #CC2222;
+	border-top: 2px solid #c22;
+}
+
+.warning-top {
+	font-weight: bold;
+	text-decoration: underline;
 }
 
 /* Darker chat container */
@@ -166,4 +218,11 @@ h1.testh1{
 .timestamp {
   float: right;
   color: #aaa;
+}
+
+
+
+@media screen and (max-width: 739px){
+	.flexh{flex-direction: column-reverse;}
+	#user-list-wrapper{max-height: 30%; max-width: 100%; margin-left: 1em; margin-right: 1em;}
 }

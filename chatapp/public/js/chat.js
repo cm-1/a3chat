@@ -42,7 +42,9 @@ $(document).ready(function() {
 		let $msgDiv = $("<div></div>").addClass("message");
 		let $userString = $("<span></span>").addClass("nickname").attr("data-uID", msgData.userID).text(nicknames[msgData.userID].nickname);
 		let $youString = $("<span></span>").addClass("you-string");
-		let $timeString = $("<span></span>").addClass("timestamp").text(msgTime.getUTCHours() + ":" + minutesString);
+		//Commented out, because it's not specified by the assignment as required.
+		//let dayPrefix = msgTime.getUTCFullYear() + "/" + (msgTime.getUTCMonth() + 1) + "/" + msgTime.getUTCDate();
+		let $timeString = $("<span></span>").addClass("timestamp").text(msgTime.getUTCHours() + ":" + minutesString + " (UTC)");
 		let $msgString = $("<span></span>").addClass("message-data").text(msgData.message);
 		
 		$userString.css({"color":nicknames[msgData.userID].colour});
@@ -75,6 +77,16 @@ $(document).ready(function() {
 			
 			$("#user-list").append($("<li></li>").append($userString, $youString));
 		}
+		
+		/*let i;
+		for (i = 0; i < 100; i++){
+			let $userString = $("<span></span>").addClass("nickname").text("Bob");
+			
+			$userString.css({"color": "#f00"});
+		
+			
+			$("#user-list").append($("<li></li>").append($userString));
+		}*/
 	};
 
 	$("form").submit(function(e){

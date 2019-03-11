@@ -133,6 +133,8 @@ io.on("connection", function(socket){
 	let oldNickname = '';
 	//Check if someone took the user's username since they left
 	if(typeof(c.userID) !== 'undefined'){
+		console.log("Nicknames:");
+		console.log(nicknames);
 		for(let nicknameUserID in nicknames){
 			//If someone has the username, and that someone isn't the user we're currently looking at...
 			if (nicknames[nicknameUserID].nickname === nicknames[parseInt(c.userID)].nickname && nicknameUserID !== c.userID){
@@ -156,7 +158,7 @@ io.on("connection", function(socket){
 		
 		if (nameSnatched){
 			//Create colour with random hue (range 0-360), middling saturation, middling lightness
-			let col = fromHslToRgb(Math.floor((Math.random() * 360) + 1), 0.5, 0.5);
+			let col = fromHslToRgb(Math.floor((Math.random() * 360) + 1), 0.7, 0.5);
 			let replacementNickname = getAutoNickname();
 			nicknames[parseInt(c.userID)] = {nickname: replacementNickname, colour: col};
 		}

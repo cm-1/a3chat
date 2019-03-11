@@ -4,7 +4,6 @@
 * "The nickname should be indicated to the user, 
   for example by being displayed at the top of the page 
   as suggested in the proposed layout."
-* Error if someone snatched your username while you were disconnected.
 * See the next section
 
 == Done, But Improvable ==
@@ -16,11 +15,12 @@
 * (SORTA-DONE!) User-posted messages are bolded (not so much a feature as an assignment requirement...)
 
 == Testing ==
-* Supports 5+ concurrent users at a time.
+* Supports 5+ concurrent users at a time. [Why wouldn't it...?]
 * Tested to work in both Chrome and Firefox. [I'll try to test Edge wherever possible. Safari and Internet Explorer are probably on their own...]
 
 Finally, the following is a note to myself to make sure it works on the lab's Linux computers.
 I will have plenty of time to test this on the weekend, given that the University owns me and I live nowhere else.
+[UPDATE: It turned out that I did NOT have time to test it at Uni, because Animation took up my entire Sunday. I'm gonna take a leap of faith with this one.]
 
 == Done ==
 * (DONE!) Unique nicknames upon connection
@@ -44,3 +44,4 @@ I will have plenty of time to test this on the weekend, given that the Universit
 	- Parse the cookie for the userID
 	- On client side:	document.cookie = "userID=_";
 	- Etc.
+* (DONE!) Error if someone snatched your username while you were disconnected.
