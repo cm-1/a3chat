@@ -1,28 +1,22 @@
 == Have to implement: ==
-* Basic responsive design.
-* Make user list scrollable.
+* Prettier UI...
 * "The nickname should be indicated to the user, 
   for example by being displayed at the top of the page 
   as suggested in the proposed layout."
-* See the next section
 
 == Done, But Improvable ==
+* (Sorta-DONE!) Basic responsive design.
+	- Could definitely make user list collapsable, shorter by default, shorter when only one/two users online...
 * (Sorta-DONE!) Timestamps (calculated by the server)
 	- DONE! But maybe add date, too?
 	- Finally, note that getUTCMonth is 0-11, while getUTCFullYear and getUTCDate are "properly" indexed.
 	- (SKIP FOR NOW) Could also add a "Today" and a "Yesterday" feature, but that may need an event at midnight UTC? And that would need setTimeout?
 	- (SKIP FOR NOW) Also, doing the "Today", "Yesterday", etc. would make it easier to store the date info in html tag as "data-" custom attributes.
-* (SORTA-DONE!) User-posted messages are bolded (not so much a feature as an assignment requirement...)
-
-== Testing ==
-* Supports 5+ concurrent users at a time. [Why wouldn't it...?]
-* Tested to work in both Chrome and Firefox. [I'll try to test Edge wherever possible. Safari and Internet Explorer are probably on their own...]
-
-Finally, the following is a note to myself to make sure it works on the lab's Linux computers.
-I will have plenty of time to test this on the weekend, given that the University owns me and I live nowhere else.
-[UPDATE: It turned out that I did NOT have time to test it at Uni, because Animation took up my entire Sunday. I'm gonna take a leap of faith with this one.]
+* (IMPROVABLE!) User-posted messages are bolded (not so much a feature as an assignment requirement...)
+	- Could use a different background colour instead...
 
 == Done ==
+* (DONE!) Make user list scrollable.
 * (DONE!) Unique nicknames upon connection
 * (DONE!) Bottom-aligning of text (this is supposed to be challenging!) and a scroll bar
 * (DONE!) History
@@ -45,3 +39,12 @@ I will have plenty of time to test this on the weekend, given that the Universit
 	- On client side:	document.cookie = "userID=_";
 	- Etc.
 * (DONE!) Error if someone snatched your username while you were disconnected.
+
+== Testing, Before Submission ==
+* Supports 5+ concurrent users at a time. [Why wouldn't it...?]
+* Tested to work in both Chrome and Firefox. [I'll try to test Edge wherever possible. Safari and Internet Explorer are probably on their own...]
+
+Finally, the following is a note to myself to make sure it works on the lab's Linux computers.
+I will have plenty of time to test this on the weekend, given that the University owns me and I live nowhere else.
+[UPDATE: It turned out that I did NOT have time to test it at Uni, because Animation took up my entire Sunday. I'm gonna take a leap of faith with this one.]
+[UPDATE 2: So it turns out that the padStart() function did cause a problem on the Uni computers, but the TA said not to worry about it.]
