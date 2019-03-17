@@ -9,7 +9,7 @@ Sure. Unless you're also submitting a chat assignment for a Web Based Systems co
 
 I currently have assigned an MIT license to this project. I may assign an even more free license later, when I have the time to (a) breath and (b) read through the different options. Regardless of what the license is, though, I really do not care at all whether this gets reused, how it gets reused, whether I'm credited...
 
-If you *have* the chance, though, it may be nice to credit the socket.io tutorial as the inspiration for this code. At bare minimum, keep any comments I have that link back to them.
+If you *have* the chance, though, it may be nice to credit the socket.io tutorial as the inspiration for this code. Or, at least, keep any comments I have that link back to them.
 
 ## What Features Are There?
 
