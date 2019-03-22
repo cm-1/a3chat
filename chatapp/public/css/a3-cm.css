@@ -141,12 +141,12 @@ h1.testh1{
 	overflow: auto;
 	padding: 1em;
 	border-radius: 10px;
-	
+	padding-right: 0em;
 }
 #main {max-height: 100%; overflow: auto;}
-#user-list-wrapper{padding: 1em; overflow: auto; font-size: 1.25em; max-width: 30%; margin-bottom: 1em;}
+#user-list-wrapper{background-color: #2e3441; background-color: #333a; border-radius:10px; margin-top: 1em; padding: 1em; overflow: auto; font-size: 1.25em; max-width: 30%; margin-bottom: 1em; margin-right: 1em;}
 
-.your-username{font-weight: bold;}
+.nickname{font-weight: bold;}
 .your-text{font-weight: bold;}
 .you-string{font-style: italic;}
 .chat-title{
@@ -159,18 +159,18 @@ h1.testh1{
 
 /*Custom scrollbar*/
 ::-webkit-scrollbar {
-  background-color: #777;
+  background-color: #333;
   border-radius: 5px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px grey; 
+  box-shadow: inset 0 0 5px #444; 
 }
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #444; 
+  background: #222; 
   border-radius: 5px;
 }
 
@@ -186,9 +186,13 @@ h1.testh1{
 
 /* Chat containers */
 .message {
-  border-top: 2px solid #e1e1e1;
-  background-color: #555;
+  border-top: 2px solid #484848;
+  background-color: #444;
   padding: 0.75em 0.75em;
+}
+
+.you {
+  background-color: #3d3d3d;
 }
 
 .warning {
@@ -225,4 +229,5 @@ h1.testh1{
 @media screen and (max-width: 739px){
 	.flexh{flex-direction: column-reverse;}
 	#user-list-wrapper{max-height: 30%; max-width: 100%; margin-left: 1em; margin-right: 1em;}
+	#messaging{padding-right: 1em;
 }

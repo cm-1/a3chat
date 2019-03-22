@@ -158,7 +158,7 @@ io.on("connection", function(socket){
 		
 		if (nameSnatched){
 			//Create colour with random hue (range 0-360), middling saturation, middling lightness
-			let col = fromHslToRgb(Math.floor((Math.random() * 360) + 1), 0.7, 0.5);
+			let col = fromHslToRgb(Math.floor((Math.random() * 360) + 1), 0.6, 0.7);
 			let replacementNickname = getAutoNickname();
 			nicknames[parseInt(c.userID)] = {nickname: replacementNickname, colour: col};
 		}
@@ -168,7 +168,7 @@ io.on("connection", function(socket){
 		let autoNickname = getAutoNickname();
 		
 		//Create colour with random hue (range 0-360), middling saturation, middling lightness
-		let col = fromHslToRgb(Math.floor((Math.random() * 360) + 1), 0.5, 0.5);
+		let col = fromHslToRgb(Math.floor((Math.random() * 360) + 1), 0.6, 0.7);
 		
 		idMap[socket.id] = nextUserID;
 		connUserID = nextUserID;
